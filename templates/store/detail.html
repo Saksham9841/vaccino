@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <section class="py-5">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-lg-6">
+          <!-- PRODUCT SLIDER -->
+          <div class="thumbs-wrap">
+            
+      
+            </div>
+          <div class="row m-sm-0">
+            <div class="col-sm-12 order-1 order-sm-2">
+              <div class="owl-carousel product-slider" data-slider-id="1">
+                {% for image in product.images.all %}
+                  <a class="d-block" href="{{ image.image.url }}" data-lightbox="product" title="{{ product.title }}">
+
+                    <img class="img-fluid" src="{{ image.image.url }}" alt="{{ product.title }}">
+
+                  </a>
+                {% endfor %}
+              </div>
+            
+            
+            </div>
+          </div>
+          
+        </div>
+
+        <!-- PRODUCT DETAILS -->
+        <div class="col-lg-6">
+          
+          <h1>{{ product.title }}</h1>
+          <p class="text-muted lead">Rs. {{ product.price }}</p>
+          <p class="text-small mb-4">{{ product.short_description }}</p>
+
+          <div class="row align-items-stretch mb-4">
+            <div class="col-sm-5 pr-sm-0">
+              <div class="border d-flex align-items-center justify-content-between py-1 px-3 bg-white border-white">
+                <span class="small text-uppercase text-gray mr-4 no-select">Quantity</span>
+                <div class="quantity">
+                  <button class="dec-btn p-0"><i class="fas fa-caret-left"></i></button>
+                  <input name="quantity" class="form-control border-0 shadow-0 p-0" type="text" value="1">
+                  <button class="inc-btn p-0"><i class="fas fa-caret-right"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-3 pl-sm-0">
+              <form action="{% url 'store:add-to-cart' %}">
+                <input type="hidden" name="prod_id" value="{{ product.id }}" id="product_id">
+                <button type="submit" class="btn btn-dark btn-lg btn-block h-100 d-flex align-items-center justify-content-center px-0" onclick="addToCart()">Add to Cart</button>
+              </form>
+
+            </div>
+              
+          </div>
+
+          <style>
+            /* Custom CSS for size buttons */
+            .choose-size {
+              color: white;
+              background-color: black;
+  
+              border: 2px solid white;
+              }
+  
+          .choose-size:hover {
+            color: black;
+            background-color: white;
+            border: 2px solid black;
+          }
+      
+          /* Custom CSS for circular buttons */
+          .choose-color {
+            width: 30px; /* Adjust the width and height as per your design */
+            height: 30px;
+            border-radius: 50%; /* Create a circular shape with rounded corners */
+          }
+      
+          .choose-color:hover {
+            border: 2px solid black; /* Change the border color on hover */
+          }
+        </style>
+      
+        <ul class="list-unstyled small d-inline-block">
+            <div class="form-group col-md">
+              <li class="px-3 py-2 mb-1 bg-white"><strong class="text-uppercase">Select Size</strong></li>
+              <div class="mt-1">
+                {% for size in product.size.all %}
+                
+                
+                <button class="btn btn-outline-secondary btn-sm choose-size" name="selected_size" value={{size.title}} id="selected_size" onclick="selectSize()" >  {{ size.title }} </button>
+                {% endfor %}
+              </div>
+            </div>
+      
+            <div class="form-group col-md">
+              <li class="px-3 py-2 mb-1 bg-white"><strong class="text-uppercase">Select Color</strong></li>
+              <div class="mt-1">
+                {% for color in product.color.all %}
+                <button class="btn btn-lg choose-color circle-button" name="selected_color" value="{{ color.id}}" style="background-color: {{ color.color_code }};"  > </button>
+                {% endfor %}
+              </div>
+            </div>
+        
+
+          <ul class="list-unstyled small d-inline-block">
+            <li class="px-3 py-2 mb-1 bg-white"><strong class="text-uppercase">SKU:</strong><span class="ml-2 text-muted">{{ product.sku }}</span></li>
+            <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Category:</strong><a class="reset-anchor ml-2" href="{% url 'store:category-products' product.category.slug %}">{{ product.category }}</a></li>
+            <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Tags:</strong><a class="reset-anchor ml-2" href="#">Innovation</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <script>
+
+        function selectSize(){
+          const selectedSize = document.querySelector('button[name="selected_size"]')?.value;
+          
+        
+          
+          console.log(selectedSize);
+  
+        }
+        
+  function addToCart() {
+    // Get the selected size and color values
+    //const selectedSize = document.getElementByName("selected_size").value;
+  //  console.log(selectedSize);
+    const selectedColor = document.querySelector('button[name="selected-color"]:checked')?.value;
+    const productId = document.getElementById('product_id').value;
+
+    // Create the URL with query parameters
+    let url = "{% url 'store:add-to-cart' %}" + `?prod_id=${productId}`;
+    
+    // Check if size and color are selected and add them as query parameters
+    if (selectedSize) {
+      url += `&selected-size=${selectedSize}`;
+    }
+    if (selectedColor) {
+      url += `&selected-color=${selectedColor}`;
+    }
+
+    // Redirect to the cart detail page with the selected values
+    window.location.href = url;
+  }
+</script>
+      <!-- DETAILS TABS -->
+      <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">Description</a>
+        </li>
+      </ul>
+
+      <div class="tab-content mb-5" id="myTabContent">
+        <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+          <div class="p-4 p-lg-5 bg-white">
+            <h6 class="text-uppercase">Product description</h6>
+            <p class="text-muted text-small mb-0">{{ product.detail_description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RELATED PRODUCTS -->
+      <h2 class="h5 text-uppercase mb-4">Related products</h2>
+      <div class="row">
+        {% if related_products %}
+          {% for rp in related_products %}
+            <div class="col-lg-3 col-sm-6">
+              <!-- PRODUCT -->
+              <div class="product text-center skel-loader">
+                <div class="d-block mb-3 position-relative">
+                  <a class="d-block" href="{% url 'store:product-detail' rp.slug %}">
+                    {% if rp.product_image %}
+                      <img class="img-fluid w-100" src="{{ rp.product_image.url }}" alt="{{ rp.title }}">
+                    {% else %}
+                      <img class="img-fluid w-100" src="{% static 'img/product-1.jpg' %}" alt="{{ rp.title }}">
+                    {% endif %}
+                  </a>
+                  <div class="product-overlay">
+                    <ul class="mb-0 list-inline">
+                      <li class="list-inline-item m-0 p-0"><a class="btn btn-sm btn-outline-dark" href="#"><i class="far fa-heart"></i></a></li>
+                      <li class="list-inline-item m-0 p-0"><a class="btn btn-sm btn-dark" href="{% url 'store:add-to-cart' %}">Add to cart</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <h6><a class="reset-anchor" href="{% url 'store:product-detail' rp.slug %}">{{ rp.title }}</a></h6>
+                <p class="small text-muted">Rs. {{ rp.price }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  
+{% endblock content %}
