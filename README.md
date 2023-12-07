@@ -30,9 +30,6 @@ And if you like this project then ADD a STAR ⭐️  to this project 👆
 8. Reset Password
 
 
-## Support Developer
-1. Subscribe & Share my YouTube Channel - https://bit.ly/vijay-thapa-online-courses
-2. Add a Star 🌟  to this 👆 Repository
 
 
 
